@@ -7,6 +7,7 @@ class Channel
 	private $channelName = '';
 	private $_topic = '';
 	private $_users = [];
+	private $_usersCount = 0;
 
 	/**
 	 * Channel constructor.
@@ -37,4 +38,36 @@ class Channel
 	{
 		return $this->_users;
 	}
+
+	/**
+	 * Returns name of this channel
+	 *
+	 * @return string
+	 */
+	public function getName():string
+	{
+		return $this->channelName;
+	}
+
+	/**
+	 * Returns topic of this channel
+	 *
+	 * @return string
+	 */
+	public function getTopic():string
+	{
+		return $this->_topic;
+	}
+
+	/**
+	 * Returns count users of this channel
+	 *
+	 * @return int
+	 */
+	public function getUsersCount():int
+	{
+		return $this->_usersCount;
+	}
+
+
 }

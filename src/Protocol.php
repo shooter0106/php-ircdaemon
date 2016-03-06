@@ -7,7 +7,7 @@ use IRCPHP\Entities\User;
 class Protocol
 {
 	private $_protocol = [
-		'NICK', 'USER', 'QUIT', 'JOIN', 'MODE', 'WHO', 'PRIVMSG'
+		'NICK', 'USER', 'QUIT', 'JOIN', 'MODE', 'WHO', 'PRIVMSG', 'LIST'
 	];
 	private $_commands = [];
 	private $_connection = null;
@@ -91,6 +91,9 @@ class Protocol
 							'receiver' => $tmp['params'][0],
 							'message' => $tmp['params'][1],
 						], $this->_connection);
+						break;
+					case 'LIST':
+
 						break;
 				}
 			}
