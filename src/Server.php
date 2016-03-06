@@ -33,6 +33,12 @@ class Server
 		unset(self::$_users[$connection->id]);
 	}
 
+	/**
+	 * Join to channel
+	 *
+	 * @param string $channelName
+	 * @param $connection
+	 */
 	public static function joinChannel(string $channelName, $connection)
 	{
 		if (!isset(self::$_channels[$channelName])) {
@@ -43,23 +49,47 @@ class Server
 		} else {}
 	}
 
+	/**
+	 * Creating channel
+	 *
+	 * @param string $channelName
+	 * @param $connection
+	 */
 	public static function createChannel(string $channelName, $connection)
 	{
 		self::$_channels[$channelName] = new Channel($channelName);
 		print "Channel {$channelName} created\n";
 	}
 
+	/**
+	 * Get User information
+	 *
+	 * @param $connection
+	 * @return User
+	 */
 	public static function getUser($connection):User
 	{
 		return self::$_users[$connection->id];
 	}
 
+	/**
+	 * Get channel modes
+	 *
+	 * @param string $channelName
+	 * @param $connection
+	 */
 	public static function getChannelModes(string $channelName, $connection)
 	{
 		$user = self::getUser($connection);
 		$connection->send("324 {$user->getNick()} {$channelName} +cnt\n\r");
 	}
 
+	/**
+	 * Get users on channel
+	 *
+	 * @param string $channelName
+	 * @param $connection
+	 */
 	public static function getChannelUsers(string $channelName, $connection)
 	{
 		$users = self::$_channels[$channelName]->getUsers();

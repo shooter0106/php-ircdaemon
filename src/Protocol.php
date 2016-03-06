@@ -7,7 +7,7 @@ use IRCPHP\Entities\User;
 class Protocol
 {
 	private $_protocol = [
-		'NICK', 'USER', 'QUIT', 'JOIN', 'MODE', 'WHO'
+		'NICK', 'USER', 'QUIT', 'JOIN', 'MODE', 'WHO', 'PRIVMSG'
 	];
 	private $_commands = [];
 	private $_connection = null;
@@ -85,6 +85,9 @@ class Protocol
 						break;
 					case 'WHO':
 						Server::getChannelUsers($tmp['params'][0], $this->_connection);
+						break;
+					case 'PRIVMSG':
+
 						break;
 				}
 			}
