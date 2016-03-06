@@ -10,15 +10,17 @@ class Protocol
 		'CAP', 'NICK', 'USER', 'QUIT'
 	];
 	private $_commands = [];
+	private $_connectionID = 0;
 
 	/**
 	 * Preapres client raw input
 	 *
 	 * @param string $input
+	 * $@param int $conID
 	 */
-	public function readClientMessage(string $input)
+	public function readClientMessage(string $input, int $conID)
 	{
-		d($input);
+		$this->_connectionID = $conID;
 		$commands = explode("\r", $input);
 		foreach ($commands as &$message) {
 			$message = trim(str_replace(["\r\n", "\n", "\r"], '', $message));
@@ -62,10 +64,14 @@ class Protocol
 			$tmp = $this->parseCommand($command);
 			if (in_array($tmp['cmd'], $this->_protocol)) {
 				switch ($tmp['cmd']) {
-					case 'NICK':
+					/*case 'NICK':
 						Server::createUser($tmp['params'][0]);
+						break;*/
+					case 'USER':
+						Server::createUser($tmp['params'][0], $this->_connectionID);
 						break;
-					case 'QUIT';
+					case 'QUIT':
+						Server::destroyUser($this->_connectionID);
 						break;
 				}
 			}

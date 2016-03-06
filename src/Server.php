@@ -12,16 +12,24 @@ class Server
 	 * Create User instance
 	 *
 	 * @param string $nick
+	 * @param int $conID
 	 */
-	public static function createUser(string $nick)
+	public static function createUser(string $nick, int $conID)
 	{
 		if (!isset(self::$_users[$nick])) {
-			self::$_users[$nick] = new User($nick);
+			self::$_users[$conID] = new User($nick, $conID);
 		} else {
 			//TODO throw user exception
 		}
 	}
 
-	public static function destroyUser(string $nick)
-	{}
+	/**
+	 * Destruct User instance
+	 *
+	 * @param int $conID
+	 */
+	public static function destroyUser(int $conID)
+	{
+		unset(self::$_users[$conID]);
+	}
 }

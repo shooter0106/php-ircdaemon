@@ -10,8 +10,9 @@ class User
 	 * User constructor.
 	 *
 	 * @param string $nick
+	 * @param int $conId
 	 */
-	public function __construct(string $nick)
+	public function __construct(string $nick, int $conId)
 	{
 		$this->_nick = $nick;
 		print "User {$this->_nick} connected.\n";
