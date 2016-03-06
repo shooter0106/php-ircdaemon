@@ -81,7 +81,7 @@ class Server
 	public static function getChannelModes(string $channelName, $connection)
 	{
 		$channel = self::$_channels[$channelName];
-		$connection->send("324 {$channelName} +{$channel->getModes()}\n\r");
+		$connection->send("324 {$channelName} {$channel->getModes()}\n\r");
 	}
 
 	/**
@@ -94,10 +94,10 @@ class Server
 	{
 		$users = self::$_channels[$channelName]->getUsers();
 		foreach ($users as $user) {
-			$connection->send("352 shooter {$channelName} {$user->getNick()} {$user->getHost()} localhost.localdomain {$user->getNick()} H :0 {$user->getRealname()}\n\r");//TODO Fix
+			$connection->send("{$channelName} {$user->getNick()} {$user->getHost()} localhost.localdomain {$user->getNick()} H :0 realname\n\r");//TODO Fix
 		}
 		$user = self::getUser($connection);
-		$connection->send("315 {$user->getNick()} {$channelName} :End of /WHO list.\n\r");//TODO Debug
+		$connection->send("{$user->getNick()} {$channelName} :End of /WHO list.\n\r");//TODO Debug
 	}
 
 	public static function sendMessage(array $params, $connection)
