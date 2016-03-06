@@ -15,6 +15,13 @@ class Server
 	 */
 	public static function createUser(string $nick)
 	{
-		self::$_users[] = new User($nick);
+		if (!isset(self::$_users[$nick])) {
+			self::$_users[$nick] = new User($nick);
+		} else {
+			//TODO throw user exception
+		}
 	}
+
+	public static function destroyUser(string $nick)
+	{}
 }

@@ -65,6 +65,8 @@ class Protocol
 					case 'NICK':
 						Server::createUser($tmp['params'][0]);
 						break;
+					case 'QUIT';
+						break;
 				}
 			}
 		}
