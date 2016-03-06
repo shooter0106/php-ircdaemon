@@ -113,7 +113,7 @@ class Server
 		$connection->send("321 {$user->getNick()} Channels :Users Name\n\r");
 
 		foreach (self::$_channels as $channel) {
-			$connection->send("322 {$user->getNick()} {$channel->getName} {$channel->getUsersCount()} :[+r] {$channel->getTopic}\n\r");
+			$connection->send("322 {$user->getNick()} {$channel->getName()} {$channel->getUsersCount()} :[+r] {$channel->getTopic()}\n\r");
 		}
 
 		$connection->send("323 {$user->getNick()} :End of /LIST\n\r");
