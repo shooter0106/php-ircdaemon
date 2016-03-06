@@ -19,11 +19,13 @@ spl_autoload_register(function (string $class) {
 	}
 });
 
+use IRCPHP\Server;
 use Workerman\Worker;
 use IRCPHP\Protocol;
-use IRCPHP\Server;
 
+$server = new Server();
 $protocol = new Protocol();
+
 $tcp_worker = new Worker("tcp://0.0.0.0:6667");
 
 $tcp_worker->onConnect = function($connection) {};

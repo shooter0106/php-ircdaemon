@@ -6,10 +6,15 @@ use IRCPHP\Entities\User;
 
 class Server
 {
-	private $_users = [];
+	private static $_users = [];
 
-	public function createUser(string $nick)
+	/**
+	 * Create User instance
+	 *
+	 * @param string $nick
+	 */
+	public static function createUser(string $nick)
 	{
-		$this->_users[] = new User($nick);
+		self::$_users[] = new User($nick);
 	}
 }

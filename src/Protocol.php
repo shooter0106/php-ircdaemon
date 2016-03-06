@@ -18,6 +18,7 @@ class Protocol
 	 */
 	public function readClientMessage(string $input)
 	{
+		d($input);
 		$commands = explode("\r", $input);
 		foreach ($commands as &$message) {
 			$message = trim(str_replace(["\r\n", "\n", "\r"], '', $message));
@@ -62,7 +63,7 @@ class Protocol
 			if (in_array($tmp['cmd'], $this->_protocol)) {
 				switch ($tmp['cmd']) {
 					case 'NICK':
-						$user = new User($tmp['params'][0]);
+						Server::createUser($tmp['params'][0]);
 						break;
 				}
 			}
