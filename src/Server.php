@@ -99,4 +99,10 @@ class Server
 		$user = self::getUser($connection);
 		$connection->send("315 {$user->getNick()} {$channelName} :End of /WHO list.\n\r");//TODO Debug
 	}
+
+	public static function sendMessage(array $params, $connection)
+	{
+		$user = self::getUser($connection);
+		$connection->send(":{$user->getNick()}!~{$user->getHost()} PRIVMSG {$params['receiver']} {$params['message']}\n\r");
+	}
 }

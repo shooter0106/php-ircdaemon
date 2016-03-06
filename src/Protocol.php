@@ -87,7 +87,10 @@ class Protocol
 						Server::getChannelUsers($tmp['params'][0], $this->_connection);
 						break;
 					case 'PRIVMSG':
-
+						Server::sendMessage([
+							'receiver' => $tmp['params'][0],
+							'message' => $tmp['params'][1],
+						], $this->_connection);
 						break;
 				}
 			}
