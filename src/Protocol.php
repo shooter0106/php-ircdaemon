@@ -7,20 +7,19 @@ use IRCPHP\Entities\User;
 class Protocol
 {
 	private $_protocol = [
-		'CAP', 'NICK', 'USER', 'QUIT'
+		'CAP', 'NICK', 'USER', 'QUIT', 'JOIN'
 	];
 	private $_commands = [];
-	private $_connectionID = 0;
+	private $_connection = null;
 
 	/**
 	 * Preapres client raw input
 	 *
 	 * @param string $input
-	 * $@param int $conID
 	 */
-	public function readClientMessage(string $input, int $conID)
+	public function readClientMessage(string $input, $connection)
 	{
-		$this->_connectionID = $conID;
+		$this->_connection = $connection;
 		$commands = explode("\r", $input);
 		foreach ($commands as &$message) {
 			$message = trim(str_replace(["\r\n", "\n", "\r"], '', $message));
@@ -68,10 +67,13 @@ class Protocol
 						Server::createUser($tmp['params'][0]);
 						break;*/
 					case 'USER':
-						Server::createUser($tmp['params'][0], $this->_connectionID);
+						Server::createUser($tmp['params'][0], $this->_connection);
 						break;
 					case 'QUIT':
-						Server::destroyUser($this->_connectionID);
+						Server::destroyUser($this->_connection);
+						break;
+					case 'JOIN':
+						Server::joinChannel($tmp['params'][0], $this->_connection);
 						break;
 				}
 			}

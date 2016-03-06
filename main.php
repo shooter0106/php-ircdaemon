@@ -32,8 +32,8 @@ $tcp_worker->onConnect = function($connection) {};
 
 $tcp_worker->onMessage = function($connection, $data) use (&$protocol)
 {
-	//$connection->send("hello! \n");
-	$protocol->readClientMessage($data, $connection->id);
+	d($data);
+	$protocol->readClientMessage($data, $connection);
 	$protocol->execCommands();
 };
 
