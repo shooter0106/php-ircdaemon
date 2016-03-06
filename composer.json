@@ -1,0 +1,6 @@
+{
+    "require": {
+        "workerman/workerman": "^3.3",
+        "raveren/kint": "^1.0"
+    }
+}
