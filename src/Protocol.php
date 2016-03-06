@@ -7,7 +7,7 @@ use IRCPHP\Entities\User;
 class Protocol
 {
 	private $_protocol = [
-		'CAP', 'NICK', 'USER', 'QUIT', 'JOIN'
+		'NICK', 'USER', 'QUIT', 'JOIN', 'MODE', 'WHO'
 	];
 	private $_commands = [];
 	private $_connection = null;
@@ -67,13 +67,24 @@ class Protocol
 						Server::createUser($tmp['params'][0]);
 						break;*/
 					case 'USER':
-						Server::createUser($tmp['params'][0], $this->_connection);
+						$this->_connection->send("*** Welcome to the shooter's PHP IRC server!!! ***\n\r");
+						Server::createUser([
+							'username' => $tmp['params'][0],
+							'servername' => $tmp['params'][2],
+							'realname' => $tmp['params'][3],
+						], $this->_connection);
 						break;
 					case 'QUIT':
 						Server::destroyUser($this->_connection);
 						break;
 					case 'JOIN':
 						Server::joinChannel($tmp['params'][0], $this->_connection);
+						break;
+					case 'MODE':
+						Server::getChannelModes($tmp['params'][0], $this->_connection);
+						break;
+					case 'WHO':
+						Server::getChannelUsers($tmp['params'][0], $this->_connection);
 						break;
 				}
 			}

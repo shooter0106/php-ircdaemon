@@ -4,6 +4,7 @@ namespace IRCPHP;
 
 use IRCPHP\Entities\User;
 use IRCPHP\Entities\Channel;
+use Workerman\Worker;
 
 class Server
 {
@@ -13,13 +14,12 @@ class Server
 	/**
 	 * Create User instance
 	 *
-	 * @param string $nick
-	 * @param int $conID
+	 * @param array $params
 	 */
-	public static function createUser(string $nick, $connection)
+	public static function createUser(array $params, $connection)
 	{
-		if (!isset(self::$_users[$nick])) {
-			self::$_users[$connection->id] = new User($nick, $connection->id);
+		if (!isset(self::$_users[$connection->id])) {
+			self::$_users[$connection->id] = new User($params, $connection);
 		} else {
 			//TODO throw user exception
 		}
@@ -27,7 +27,6 @@ class Server
 
 	/**
 	 * Destruct User instance
-	 * @param int $conID
 	 */
 	public static function destroyUser($connection)
 	{
@@ -38,6 +37,9 @@ class Server
 	{
 		if (!isset(self::$_channels[$channelName])) {
 			self::createChannel($channelName, $connection);
+			$user = self::getUser($connection);
+			self::$_channels[$channelName]->addUser($user);
+			$connection->send(":{$user->getNick()}!~{$user->getNick()}@{$user->getHost()} JOIN {$channelName} * {$user->getRealname()}\n\r");
 		} else {}
 	}
 
@@ -45,6 +47,26 @@ class Server
 	{
 		self::$_channels[$channelName] = new Channel($channelName);
 		print "Channel {$channelName} created\n";
-		$connection->send(":shooter!~shooter@127.0.0.1 JOIN #test * :realname\n\r");
+	}
+
+	public static function getUser($connection):User
+	{
+		return self::$_users[$connection->id];
+	}
+
+	public static function getChannelModes(string $channelName, $connection)
+	{
+		$user = self::getUser($connection);
+		$connection->send("324 {$user->getNick()} {$channelName} +cnt\n\r");
+	}
+
+	public static function getChannelUsers(string $channelName, $connection)
+	{
+		$users = self::$_channels[$channelName]->getUsers();
+		foreach ($users as $user) {
+			$connection->send("354 {$user->getNick()} 152 {$channelName} {$user->getNick()} {$user->getHost()} {$user->getNick()} H {$user->getNick()} {$user->getRealname()}\n\r");
+		}
+		$user = self::getUser($connection);
+		$connection->send("315 {$user->getNick()} {$channelName} :End of /WHO list.\n\r");//TODO Debug
 	}
 }

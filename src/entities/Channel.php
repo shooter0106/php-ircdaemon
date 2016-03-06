@@ -6,6 +6,7 @@ class Channel
 {
 	private $channelName = '';
 	private $_topic = '';
+	private $_users = [];
 
 	/**
 	 * Channel constructor.
@@ -15,5 +16,15 @@ class Channel
 	public function __construct(string $channelName)
 	{
 		$this->channelName = $channelName;
+	}
+
+	public function addUser(User $user)
+	{
+		$this->_users[$user->getNick()] = $user;
+	}
+
+	public function getUsers():array
+	{
+		return $this->_users;
 	}
 }

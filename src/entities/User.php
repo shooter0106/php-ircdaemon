@@ -4,17 +4,20 @@ namespace IRCPHP\Entities;
 
 class User
 {
-	private $_nick = null;
+	private $_nick, $_host, $_servername, $_realname = null;
 
 	/**
 	 * User constructor.
 	 *
-	 * @param string $nick
-	 * @param int $conId
+	 * @param array $params
 	 */
-	public function __construct(string $nick, int $conId)
+	public function __construct(array $params, $connection)
 	{
-		$this->_nick = $nick;
+		$this->_nick = $params['username'];
+		$this->_host = $connection->getRemoteIp();
+		$this->_servername = $params['servername'];
+		$this->_realname = $params['realname'];
+
 		print "User {$this->_nick} connected.\n";
 	}
 
@@ -25,4 +28,37 @@ class User
 	{
 		print "User {$this->_nick} disconnected.\n";
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getNick():string
+	{
+		return $this->_nick;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getHost():string
+	{
+		return $this->_host;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getServername():string
+	{
+		return $this->_servername;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getRealname():string
+	{
+		return $this->_realname;
+	}
+
 }
