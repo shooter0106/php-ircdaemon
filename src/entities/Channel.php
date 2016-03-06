@@ -5,9 +5,10 @@ namespace IRCPHP\Entities;
 class Channel
 {
 	private $channelName = '';
-	private $_topic = '';
+	private $_topic = 'Test topic';
 	private $_users = [];
 	private $_usersCount = 0;
+	private $_modes = ['n', 'r'];
 
 	/**
 	 * Channel constructor.
@@ -27,6 +28,7 @@ class Channel
 	public function addUser(User $user)
 	{
 		$this->_users[$user->getNick()] = $user;
+		$this->_usersCount++;
 	}
 
 	/**
@@ -67,6 +69,18 @@ class Channel
 	public function getUsersCount():int
 	{
 		return $this->_usersCount;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getModes()
+	{
+		$modesString = '+';
+		foreach ($this->_modes as $mode) {
+			$modesString .= $mode;
+		}
+		return $modesString;
 	}
 
 

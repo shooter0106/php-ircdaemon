@@ -80,9 +80,8 @@ class Server
 	 */
 	public static function getChannelModes(string $channelName, $connection)
 	{
-		$user = self::getUser($connection);
-		//$connection->send("324 {$user->getNick()} {$channelName} +cnt\n\r");
-		$connection->send("324 {$channelName} +cn\n\r");
+		$channel = self::$_channels[$channelName];
+		$connection->send("324 {$channelName} +{$channel->getModes()}\n\r");
 	}
 
 	/**
@@ -109,13 +108,12 @@ class Server
 
 	public static function getChannelsList($connection)//TODO need more fixes
 	{
+		print "Requested channel list.\n";
 		$user = self::getUser($connection);
-		$connection->send("321 {$user->getNick()} Channels :Users Name\n\r");
-
+		$connection->send("Channel :Users  Name\n\r");
 		foreach (self::$_channels as $channel) {
-			$connection->send("322 {$user->getNick()} {$channel->getName()} {$channel->getUsersCount()} :[+r] {$channel->getTopic()}\n\r");
+			$connection->send("{$channel->getName()} {$channel->getUsersCount()} :[{$channel->getModes()}] {$channel->getTopic()}\n\r");
 		}
-
-		$connection->send("323 {$user->getNick()} :End of /LIST\n\r");
+		$connection->send(":End of /LIST\n\r");
 	}
 }

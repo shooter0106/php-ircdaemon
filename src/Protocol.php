@@ -93,7 +93,7 @@ class Protocol
 						], $this->_connection);
 						break;
 					case 'LIST':
-
+						Server::getChannelsList($this->_connection);
 						break;
 				}
 			}
