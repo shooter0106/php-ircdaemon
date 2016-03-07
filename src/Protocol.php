@@ -67,7 +67,7 @@ class Protocol
 						Server::createUser($tmp['params'][0]);
 						break;*/
 					case 'USER':
-						$this->_connection->send("*** Welcome to the shooter's PHP IRC server!!! ***\n\r");
+						$this->_connection->send("NOTICE AUTH :*** Welcome to the shooter's PHP IRC server!!!\n\r");//TODO need to read this from config
 						Server::createUser([
 							'username' => $tmp['params'][0],
 							'servername' => $tmp['params'][2],
