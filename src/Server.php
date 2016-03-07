@@ -138,11 +138,17 @@ class Server
 	 *
 	 * @param string $receiver
 	 * @param string $message
+	 * @param TcpConnection $connection
 	 */
-	public static function sendMessage(string $receiver, string $message)
+	public static function sendMessage(string $receiver, string $message, TcpConnection $connection)
 	{
+		$currentUserNick = self::$_users[$connection->id];
 		foreach (self::$_users as $user) {
-			$user->getConnection()->send(":{$user->getNick()}!~{$user->getHost()} PRIVMSG {$receiver} {$message}\n\r");
+			if ($user->getNick() == $currentUserNick) {
+				continue;
+			} else {
+				$user->getConnection()->send(":{$user->getNick()}!~{$user->getHost()} PRIVMSG {$receiver} {$message}\n\r");
+			}
 		}
 	}
 
