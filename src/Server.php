@@ -4,6 +4,7 @@ namespace IRCPHP;
 
 use IRCPHP\Entities\User;
 use IRCPHP\Entities\Channel;
+use Workerman\Connection\TcpConnection;
 use Workerman\Worker;
 
 class Server
@@ -16,7 +17,7 @@ class Server
 	 *
 	 * @param array $params
 	 */
-	public static function createUser(array $params, $connection)
+	public static function createUser(array $params, TcpConnection $connection)
 	{
 		if (!isset(self::$_users[$connection->id])) {
 			self::$_users[$connection->id] = new User($params, $connection);
@@ -28,7 +29,7 @@ class Server
 	/**
 	 * Destruct User instance
 	 */
-	public static function destroyUser($connection)
+	public static function destroyUser(TcpConnection $connection)
 	{
 		unset(self::$_users[$connection->id]);
 	}
@@ -39,7 +40,7 @@ class Server
 	 * @param string $channelName
 	 * @param $connection
 	 */
-	public static function joinChannel(string $channelName, $connection)
+	public static function joinChannel(string $channelName, TcpConnection $connection)
 	{
 		if (!isset(self::$_channels[$channelName])) {
 			$channel = self::createChannel($channelName, $connection);
@@ -48,11 +49,16 @@ class Server
 			self::$_channels[$channelName]->addUser($user);
 			$connection->send(":{$user->getNick()}!~{$user->getNick()}@{$user->getHost()} JOIN {$channelName}\n\r");
 
+			//send channel topic
 			if ($channel->hasTopic()) {
 				$connection->send(":localhost.localdomain 332 {$user->getNick()} {$channelName} :{$channel->getTopic()}\n\r");//TODO add servername prefix
 			} else {
 				$connection->send("331 {$channelName} :No topic is set\n\r");
 			}
+
+			//send channel users
+			$connection->send(":localhost.localdomain 353 {$user->getNick()} = {$channelName} :{$channel->getUsersString()}\n\r");
+			$connection->send(":localhost.localdomain 366 {$user->getNick()} {$channelName} :End of /NAMES list.\n\r");
 		} else {}
 	}
 
@@ -63,7 +69,7 @@ class Server
 	 * @param $connection
 	 * @return Channel
 	 */
-	public static function createChannel(string $channelName, $connection):Channel
+	public static function createChannel(string $channelName, TcpConnection $connection):Channel
 	{
 		self::$_channels[$channelName] = new Channel($channelName);
 		print "Channel {$channelName} created\n";
@@ -76,7 +82,7 @@ class Server
 	 * @param $connection
 	 * @return User
 	 */
-	public static function getUser($connection):User
+	public static function getUser(TcpConnection $connection):User
 	{
 		return self::$_users[$connection->id];
 	}
@@ -87,7 +93,7 @@ class Server
 	 * @param string $channelName
 	 * @param $connection
 	 */
-	public static function getChannelModes(string $channelName, $connection)
+	public static function getChannelModes(string $channelName, TcpConnection $connection)
 	{
 		$channel = self::$_channels[$channelName];
 		$connection->send("324 {$channelName} {$channel->getModes()}\n\r");
@@ -99,7 +105,7 @@ class Server
 	 * @param string $channelName
 	 * @param $connection
 	 */
-	public static function getChannelUsers(string $channelName, $connection)
+	public static function getChannelUsers(string $channelName, TcpConnection $connection)
 	{
 		$users = self::$_channels[$channelName]->getUsers();
 		foreach ($users as $user) {
@@ -109,13 +115,13 @@ class Server
 		$connection->send("{$user->getNick()} {$channelName} :End of /WHO list.\n\r");//TODO Debug
 	}
 
-	public static function sendMessage(array $params, $connection)
+	public static function sendMessage(array $params, TcpConnection $connection)
 	{
 		$user = self::getUser($connection);
 		$connection->send(":{$user->getNick()}!~{$user->getHost()} PRIVMSG {$params['receiver']} {$params['message']}\n\r");
 	}
 
-	public static function getChannelsList($connection)//TODO need more fixes
+	public static function getChannelsList(TcpConnection $connection)//TODO need more fixes
 	{
 		print "Requested channel list.\n";
 		$user = self::getUser($connection);

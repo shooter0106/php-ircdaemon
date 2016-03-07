@@ -61,4 +61,8 @@ class User
 		return $this->_realname;
 	}
 
+	public function __toString()
+	{
+		return $this->_nick;
+	}
 }

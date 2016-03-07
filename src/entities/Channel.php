@@ -32,13 +32,23 @@ class Channel
 	}
 
 	/**
-	 * Get usersn on channel
+	 * Get users on this channel
 	 *
 	 * @return array
 	 */
 	public function getUsers():array
 	{
 		return $this->_users;
+	}
+
+	/**
+	 * Get users on this channel as string
+	 *
+	 * @return string
+	 */
+	public function getUsersString():string
+	{
+		return implode(' ', $this->_users);
 	}
 
 	/**
