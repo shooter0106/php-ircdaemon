@@ -42,10 +42,17 @@ class Server
 	public static function joinChannel(string $channelName, $connection)
 	{
 		if (!isset(self::$_channels[$channelName])) {
-			self::createChannel($channelName, $connection);
+			$channel = self::createChannel($channelName, $connection);
 			$user = self::getUser($connection);
+
 			self::$_channels[$channelName]->addUser($user);
 			$connection->send(":{$user->getNick()}!~{$user->getNick()}@{$user->getHost()} JOIN {$channelName}\n\r");
+
+			if ($channel->hasTopic()) {
+				$connection->send(":localhost.localdomain 332 {$user->getNick()} {$channelName} :{$channel->getTopic()}\n\r");//TODO add servername prefix
+			} else {
+				$connection->send("331 {$channelName} :No topic is set\n\r");
+			}
 		} else {}
 	}
 
@@ -54,11 +61,13 @@ class Server
 	 *
 	 * @param string $channelName
 	 * @param $connection
+	 * @return Channel
 	 */
-	public static function createChannel(string $channelName, $connection)
+	public static function createChannel(string $channelName, $connection):Channel
 	{
 		self::$_channels[$channelName] = new Channel($channelName);
 		print "Channel {$channelName} created\n";
+		return self::$_channels[$channelName];
 	}
 
 	/**

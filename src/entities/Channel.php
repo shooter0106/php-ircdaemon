@@ -5,7 +5,7 @@ namespace IRCPHP\Entities;
 class Channel
 {
 	private $channelName = '';
-	private $_topic = '';
+	private $_topic = 'Test topic!';
 	private $_users = [];
 	private $_usersCount = 0;
 	private $_modes = ['n', 'r'];
@@ -62,6 +62,16 @@ class Channel
 	}
 
 	/**
+	 * Check exists channel topic
+	 *
+	 * @return bool
+	 */
+	public function hasTopic():bool
+	{
+		return !empty($this->_topic);
+	}
+
+	/**
 	 * Returns count users of this channel
 	 *
 	 * @return int
@@ -72,6 +82,8 @@ class Channel
 	}
 
 	/**
+	 * Returns modes string of this channel
+	 *
 	 * @return string
 	 */
 	public function getModes()
