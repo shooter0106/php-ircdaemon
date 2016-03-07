@@ -83,9 +83,9 @@ class Protocol
 					case 'MODE':
 						Server::getChannelModes($tmp['params'][0], $this->_connection);
 						break;
-					case 'WHO':
+					/*case 'WHO':
 						Server::getChannelUsers($tmp['params'][0], $this->_connection);
-						break;
+						break;*/
 					case 'PRIVMSG':
 						Server::sendMessage([
 							'receiver' => $tmp['params'][0],
