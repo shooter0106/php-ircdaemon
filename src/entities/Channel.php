@@ -5,7 +5,7 @@ namespace IRCPHP\Entities;
 class Channel
 {
 	private $channelName = '';
-	private $_topic = 'Test topic!';
+	private $_topic = '';
 	private $_users = [];
 	private $_usersCount = 0;
 	private $_modes = ['n', 'r'];
@@ -109,5 +109,10 @@ class Channel
 		return $modesString;
 	}
 
+	public function sendMessage()
+	{
+		foreach ($this->_users as $user) {
 
+		}
+	}
 }

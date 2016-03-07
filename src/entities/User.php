@@ -6,7 +6,7 @@ use Workerman\Connection\TcpConnection;
 
 class User
 {
-	private $_nick, $_host, $_realName, $_connectionId = null;
+	private $_nick, $_host, $_realName, $_connection = null;
 
 	/**
 	 * User constructor.
@@ -14,9 +14,9 @@ class User
 	 * @param array $params
 	 * @param TcpConnection $connection
 	 */
-	public function __construct(array $params, TcpConnection $connection)
+	public function __construct(array $params, TcpConnection &$connection)
 	{
-		$this->_connectionId = $connection->id;
+		$this->_connection = $connection;
 		$this->_nick = $params['username'];
 		$this->_host = $connection->getRemoteIp();
 		$this->_realName = $params['realname'];
@@ -67,18 +67,18 @@ class User
 	 *
 	 * @return mixed
 	 */
-	public function __toString()
+	public function __toString():string
 	{
 		return $this->_nick;
 	}
 
 	/**
-	 * Returns user connection id
+	 * Returns user connection
 	 *
-	 * @return int
+	 * @return TcpConnection
 	 */
-	public function getConnectionId():int
+	public function getConnection():TcpConnection
 	{
-		return $this->_connectionId;
+		return $this->_connection;
 	}
 }
