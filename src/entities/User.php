@@ -16,6 +16,7 @@ class User
 	 */
 	public function __construct(array $params, TcpConnection $connection)
 	{
+		$this->_connectionId = $connection->id;
 		$this->_nick = $params['username'];
 		$this->_host = $connection->getRemoteIp();
 		$this->_realName = $params['realname'];
@@ -69,5 +70,15 @@ class User
 	public function __toString()
 	{
 		return $this->_nick;
+	}
+
+	/**
+	 * Returns user connection id
+	 *
+	 * @return int
+	 */
+	public function getConnectionId():int
+	{
+		return $this->_connectionId;
 	}
 }
