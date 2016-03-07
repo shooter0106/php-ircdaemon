@@ -68,7 +68,11 @@ class Channel
 	 */
 	public function getTopic():string
 	{
-		return $this->_topic;
+		if (!empty($this->_topic)) {
+			return $this->_topic;
+		} else {
+			return '';
+		}
 	}
 
 	/**

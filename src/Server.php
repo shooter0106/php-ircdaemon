@@ -115,20 +115,32 @@ class Server
 		$connection->send("{$user->getNick()} {$channelName} :End of /WHO list.\n\r");//TODO Debug
 	}
 
+	/**
+	 * Send message to channel
+	 *
+	 * @param array $params
+	 * @param TcpConnection $connection
+	 */
 	public static function sendMessage(array $params, TcpConnection $connection)
 	{
 		$user = self::getUser($connection);
 		$connection->send(":{$user->getNick()}!~{$user->getHost()} PRIVMSG {$params['receiver']} {$params['message']}\n\r");
 	}
 
-	public static function getChannelsList(TcpConnection $connection)//TODO need more fixes
+	/**
+	 *
+	 *
+	 * @param TcpConnection $connection
+	 */
+	public static function getChannelsList(TcpConnection $connection)
 	{
-		print "Requested channel list.\n";
 		$user = self::getUser($connection);
-		$connection->send("Channel :Users  Name\n\r");
+		$connection->send(":localhost.localdomain 321 {$user->getNick()} Channel :Users  Name\n\r");
+
 		foreach (self::$_channels as $channel) {
-			$connection->send("{$channel->getName()} {$channel->getUsersCount()} :[{$channel->getModes()}] {$channel->getTopic()}\n\r");
+			$connection->send(":localhost.localdomain 322 {$user->getNick()} {$channel->getName()} {$channel->getUsersCount()} :{$channel->getTopic()}\n\r");
 		}
-		$connection->send(":End of /LIST\n\r");
+
+		$connection->send(":localhost.localdomain 323 {$user->getNick()} :End of /LIST\n\r");
 	}
 }
