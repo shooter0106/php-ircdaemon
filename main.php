@@ -27,11 +27,11 @@ $server = new Server();
 $protocol = new Protocol();
 
 $tcp_worker = new Worker("tcp://0.0.0.0:6667");
-$tcp_worker->count = 10;
+$tcp_worker->count = 1;
 
 $tcp_worker->onConnect = function($connection) {};
 
-$tcp_worker->onMessage = function($connection, $data) use (&$protocol)
+$tcp_worker->onMessage = function($connection, $data) use (&$protocol, &$server)
 {
 	$protocol->readClientMessage($data, $connection);
 	$protocol->execCommands();

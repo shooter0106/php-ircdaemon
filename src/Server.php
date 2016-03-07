@@ -60,9 +60,9 @@ class Server
 	 */
 	public static function joinChannel(string $channelName, TcpConnection $connection)
 	{
+		$user = self::getUser($connection);
 		if (!isset(self::$_channels[$channelName])) {
 			$channel = self::createChannel($channelName, $connection);
-			$user = self::getUser($connection);
 
 			self::$_channels[$channelName]->addUser($user);
 			$connection->send(":{$user->getNick()}!~{$user->getNick()}@{$user->getHost()} JOIN {$channelName}\n\r");
@@ -77,7 +77,28 @@ class Server
 			//send channel users
 			$connection->send(":localhost.localdomain 353 {$user->getNick()} = {$channelName} :{$channel->getUsersString()}\n\r");
 			$connection->send(":localhost.localdomain 366 {$user->getNick()} {$channelName} :End of /NAMES list.\n\r");
-		} else {}
+		} else {
+			$channel = self::getChannelByName($channelName);
+
+			self::$_channels[$channelName]->addUser($user);
+			$connection->send(":{$user->getNick()}!~{$user->getNick()}@{$user->getHost()} JOIN {$channelName}\n\r");
+
+			//send channel topic
+			if ($channel->hasTopic()) {
+				$connection->send(":localhost.localdomain 332 {$user->getNick()} {$channelName} :{$channel->getTopic()}\n\r");//TODO add servername prefix
+			} else {
+				$connection->send("331 {$channelName} :No topic is set\n\r");
+			}
+
+			//send channel users
+			$connection->send(":localhost.localdomain 353 {$user->getNick()} = {$channelName} :{$channel->getUsersString()}\n\r");
+			$connection->send(":localhost.localdomain 366 {$user->getNick()} {$channelName} :End of /NAMES list.\n\r");
+		}
+	}
+
+	public static function getChannelByName(string $name):Channel
+	{
+		return self::$_channels[$name];
 	}
 
 	/**
