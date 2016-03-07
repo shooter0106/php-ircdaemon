@@ -16,10 +16,12 @@ class User
 	 */
 	public function __construct(array $params, TcpConnection &$connection)
 	{
-		$this->_connection = $connection;
-		$this->_nick = $params['username'];
-		$this->_host = $connection->getRemoteIp();
+		if (isset($params['nickname'])) {
+			$this->_nick = $params['nickname'];
+		}
 		$this->_realName = $params['realname'];
+		$this->_host = $connection->getRemoteIp();
+		$this->_connection = $connection;
 
 		print "User {$this->_nick} connected.\n";
 	}

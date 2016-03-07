@@ -4,6 +4,7 @@ namespace IRCPHP;
 
 use IRCPHP\Entities\User;
 use IRCPHP\Entities\Channel;
+use IRCPHP\Entities\UserSlot;
 use Workerman\Connection\TcpConnection;
 use Workerman\Worker;
 
@@ -19,10 +20,16 @@ class Server
 	 */
 	public static function createUser(array $params, TcpConnection $connection)
 	{
-		if (!isset(self::$_users[$connection->id])) {
+		/*if (!isset(self::$_users[$connection->id])) {
 			self::$_users[$connection->id] = new User($params, $connection);
 		} else {
 			//TODO throw user exception
+		}*/
+
+		if (self::$_users[$connection->id] instanceof UserSlot) {
+			$newParams = $params;
+			$newParams['nickname'] = self::$_users[$connection->id]->getNick();
+			self::$_users[$connection->id] = new User($newParams, $connection);
 		}
 	}
 
@@ -42,11 +49,15 @@ class Server
 	 */
 	public static function changeUserNick(string $nick, TcpConnection $connection)
 	{
-		if (isset(self::$_users[$connection->id]))
-		{
+		if (isset(self::$_users[$connection->id])) {
 			self::$_users[$connection->id]->changeNick($nick);
+		} else {
+			self::$_users[$connection->id] = new UserSlot($nick, $connection);
 		}
 	}
+
+	public static function checkUserSlotAvailable(TcpConnection $connection)
+	{}
 
 	/**
 	 * Join to channel
