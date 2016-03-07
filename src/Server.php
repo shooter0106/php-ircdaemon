@@ -6,7 +6,6 @@ use IRCPHP\Entities\User;
 use IRCPHP\Entities\Channel;
 use IRCPHP\Entities\UserSlot;
 use Workerman\Connection\TcpConnection;
-use Workerman\Worker;
 
 class Server
 {
@@ -17,15 +16,10 @@ class Server
 	 * Create User instance
 	 *
 	 * @param array $params
+	 * @param TcpConnection $connection
 	 */
 	public static function createUser(array $params, TcpConnection $connection)
 	{
-		/*if (!isset(self::$_users[$connection->id])) {
-			self::$_users[$connection->id] = new User($params, $connection);
-		} else {
-			//TODO throw user exception
-		}*/
-
 		if (self::$_users[$connection->id] instanceof UserSlot) {
 			$newParams = $params;
 			$newParams['nickname'] = self::$_users[$connection->id]->getNick();
@@ -44,6 +38,8 @@ class Server
 	}
 
 	/**
+	 * Change User nickname
+	 *
 	 * @param TcpConnection $connection
 	 * @param string $nick
 	 */
@@ -55,9 +51,6 @@ class Server
 			self::$_users[$connection->id] = new UserSlot($nick, $connection);
 		}
 	}
-
-	public static function checkUserSlotAvailable(TcpConnection $connection)
-	{}
 
 	/**
 	 * Join to channel
@@ -141,19 +134,20 @@ class Server
 	}
 
 	/**
-	 * Send message to channel
+	 * Send message for all users at channel
 	 *
-	 * @param array $params
-	 * @param TcpConnection $connection
+	 * @param string $receiver
+	 * @param string $message
 	 */
-	public static function sendMessage(array $params, TcpConnection $connection)
+	public static function sendMessage(string $receiver, string $message)
 	{
-		$user = self::getUser($connection);
-		$connection->send(":{$user->getNick()}!~{$user->getHost()} PRIVMSG {$params['receiver']} {$params['message']}\n\r");
+		foreach (self::$_users as $user) {
+			$user->getConnection()->send(":{$user->getNick()}!~{$user->getHost()} PRIVMSG {$receiver} {$message}\n\r");
+		}
 	}
 
 	/**
-	 *
+	 * Send server's channel list to client
 	 *
 	 * @param TcpConnection $connection
 	 */
@@ -161,11 +155,9 @@ class Server
 	{
 		$user = self::getUser($connection);
 		$connection->send(":localhost.localdomain 321 {$user->getNick()} Channel :Users  Name\n\r");
-
 		foreach (self::$_channels as $channel) {
 			$connection->send(":localhost.localdomain 322 {$user->getNick()} {$channel->getName()} {$channel->getUsersCount()} :{$channel->getTopic()}\n\r");
 		}
-
 		$connection->send(":localhost.localdomain 323 {$user->getNick()} :End of /LIST\n\r");
 	}
 }

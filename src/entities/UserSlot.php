@@ -21,10 +21,14 @@ class UserSlot
 		$this->_connectionId = $connection->id;
 	}
 
+	/**
+	 * Return nick of this UserSlot
+	 *
+	 * @return string
+	 */
 	public function getNick():string
 	{
-		if (!empty($this->_nick)) {
-			return $this->_nick;
-		}
+		return $this->_nick;
+
 	}
 }
