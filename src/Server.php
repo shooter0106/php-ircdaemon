@@ -45,7 +45,7 @@ class Server
 			self::createChannel($channelName, $connection);
 			$user = self::getUser($connection);
 			self::$_channels[$channelName]->addUser($user);
-			$connection->send(":{$user->getNick()}!~{$user->getNick()}@{$user->getHost()} JOIN {$channelName} * {$user->getRealname()}\n\r");
+			$connection->send(":{$user->getNick()}!~{$user->getNick()}@{$user->getHost()} JOIN {$channelName}\n\r");
 		} else {}
 	}
 
