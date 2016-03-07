@@ -63,9 +63,9 @@ class Protocol
 			$tmp = $this->parseCommand($command);
 			if (in_array($tmp['cmd'], $this->_protocol)) {
 				switch ($tmp['cmd']) {
-					/*case 'NICK':
-						Server::createUser($tmp['params'][0]);
-						break;*/
+					case 'NICK':
+						Server::changeUserNick($tmp['params'][0], $this->_connection);
+						break;
 					case 'USER':
 						$this->_connection->send("NOTICE AUTH :*** Welcome to the shooter's PHP IRC server!!!\n\r");//TODO need to read this from config
 						Server::createUser([

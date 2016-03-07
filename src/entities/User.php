@@ -81,4 +81,9 @@ class User
 	{
 		return $this->_connection;
 	}
+
+	public function changeNick(string $nick)
+	{
+		$this->_nick = $nick;
+	}
 }

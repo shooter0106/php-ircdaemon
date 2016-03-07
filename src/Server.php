@@ -28,10 +28,24 @@ class Server
 
 	/**
 	 * Destruct User instance
+	 *
+	 * @param TcpConnection $connection
 	 */
 	public static function destroyUser(TcpConnection $connection)
 	{
 		unset(self::$_users[$connection->id]);
+	}
+
+	/**
+	 * @param TcpConnection $connection
+	 * @param string $nick
+	 */
+	public static function changeUserNick(string $nick, TcpConnection $connection)
+	{
+		if (isset(self::$_users[$connection->id]))
+		{
+			self::$_users[$connection->id]->changeNick($nick);
+		}
 	}
 
 	/**

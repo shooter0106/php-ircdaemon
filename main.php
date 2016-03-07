@@ -33,6 +33,7 @@ $tcp_worker->onConnect = function($connection) {};
 
 $tcp_worker->onMessage = function($connection, $data) use (&$protocol)
 {
+	d($data);
 	$protocol->readClientMessage($data, $connection);
 	$protocol->execCommands();
 };
