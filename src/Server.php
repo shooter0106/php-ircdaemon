@@ -80,8 +80,7 @@ class Server
 		if (!isset(self::$_channels[$channelName])) {
 			$channel = self::createChannel($channelName, $connection);
 			$join($channel, $user, $connection);
-		}
-		else {
+		} else {
 			$channel = self::getChannelByName($channelName);
 			$join($channel, $user, $connection);
 		}
@@ -160,12 +159,12 @@ class Server
 	 */
 	public static function sendMessage(string $receiver, string $message, TcpConnection $connection)
 	{
-		$currentUserNick = self::$_users[$connection->id];
+		$currentUser = self::$_users[$connection->id];
 		foreach (self::$_users as $user) {
-			if ($user->getNick() == $currentUserNick) {
+			if ($user->getNick() == $currentUser->getNick()) {
 				continue;
 			} else {
-				$user->getConnection()->send(":{$user->getNick()}!~{$user->getHost()} PRIVMSG {$receiver} {$message}\n\r");
+				$user->getConnection()->send(":{$currentUser->getNick()}!~{$currentUser->getHost()} PRIVMSG {$receiver} {$message}\n\r");
 			}
 		}
 	}
