@@ -74,6 +74,16 @@ class Server
 			//send channel users
 			$connection->send(":localhost.localdomain 353 {$user->getNick()} = {$channel->getName()} :{$channel->getUsersString()}\n\r");
 			$connection->send(":localhost.localdomain 366 {$user->getNick()} {$channel->getName()} :End of /NAMES list.\n\r");
+
+			//send join tonify to all users
+			$currentUser = self::$_users[$connection->id];
+			foreach (self::$_users as $user) {
+				if ($user->getNick() == $currentUser->getNick()) {
+					continue;
+				} else {
+					$user->getConnection()->send(":{$currentUser->getNick()}!~{$currentUser->getHost()} JOIN {$channel->getName()}\n\r");
+				}
+			}
 		};
 
 		$user = self::getUser($connection);

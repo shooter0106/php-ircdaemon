@@ -87,7 +87,15 @@ class Protocol
 						Server::getChannelUsers($tmp['params'][0], $this->_connection);
 						break;*/
 					case 'PRIVMSG':
-						Server::sendMessage($tmp['params'][0], $tmp['params'][1], $this->_connection);
+						$msg = '';
+						foreach ($tmp['params'] as $key => $value) {
+							if ($key == 0) {
+								continue;
+							} else {
+								$msg .= "{$value} ";
+							}
+						}//TODO fix this shit
+						Server::sendMessage($tmp['params'][0], $msg, $this->_connection);
 						break;
 					case 'LIST':
 						Server::getChannelsList($this->_connection);
